@@ -1,5 +1,4 @@
-__":
-  app.run()from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string
 import requests
 
 app = Flask(__name__)
@@ -49,10 +48,11 @@ def index():
         }
 
         # Send the request to the external API
-        response = requests.post(url, headers=headers, data=data)
-
-        # Display the response after sending the SMS
-        return f"SMS sent! Response from server: {response.text}"
+        try:
+            response = requests.post(url, headers=headers, data=data)
+            return f"SMS sent! Response from server: {response.text}"
+        except Exception as e:
+            return f"Error sending SMS: {str(e)}"
 
     # HTML Template for the form
     html_form = '''
@@ -134,5 +134,6 @@ def index():
     '''
     return render_template_string(html_form)
 
+# Vercel doesn't use app.run(), but keeping it here allows you to test locally
 if __name__ == '__main__':
     app.run(debug=True)
